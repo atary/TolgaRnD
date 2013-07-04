@@ -1,0 +1,10 @@
+Topology: ( 3 Nodes, 2 Edges )
+
+Nodes: (3)
+0 216 663 2 2 -1 RT_NONE
+1 347 333 1 1 -1 RT_NONE
+2 384 926 1 1 -1 RT_NONE
+
+Edges: (2)
+0 0 1 300.00 10.00 10.00 -1 -1 E_RT_NONE
+1 0 2 300.00 10.00 10.00 -1 -1 E_RT_NONE

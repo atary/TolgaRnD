@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+     http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+     
+  <key id="d0" for="node" attr.name="label" attr.type="string">
+    <default>NONE</default>
+  </key>  
+  <key id="d1" for="edge" attr.name="weight" attr.type="double">
+	<default>0.0</default>
+  </key>
+  <key id="d2" for="edge" attr.name="label" attr.type="string">
+    <default>NONE</default>
+  </key>
+  
+  <graph id="G" edgedefault="directed">
+    <node id="n0">
+      <data key="d0">A</data>
+    </node>
+    <node id="n1">
+      <data key="d0">B</data>
+    </node>
+    <node id="n2">
+      <data key="d0">C</data>
+    </node>
+    <node id="n3">
+      <data key="d0">D</data>
+    </node>
+    <node id="n4">
+      <data key="d0">E</data>
+    </node>
+    <node id="n5">
+      <data key="d0">F</data>
+    </node>
+    <node id="n6">
+      <data key="d0">G</data>
+    </node>
+    <node id="n7">
+      <data key="d0">H</data>
+    </node>
+    <node id="n8">
+      <data key="d0">I</data>
+    </node>
+    <node id="n9">
+      <data key="d0">J</data>
+    </node>
+    <node id="n10">
+      <data key="d0">K</data>
+    </node>
+    
+    <edge source="n0" target="n2">
+      <data key="d1">10</data>
+      <data key="d2">A-C</data>
+    </edge>
+    <edge source="n1" target="n2">
+      <data key="d1">20</data>
+      <data key="d2">B-C</data>
+    </edge>
+    <edge source="n2" target="n3">
+      <data key="d1">5</data>
+      <data key="d2">C-D</data>
+    </edge>
+    <edge source="n3" target="n5">
+      <data key="d1">15</data>
+      <data key="d2">C-E</data>
+    </edge>
+    <edge source="n3" target="n4">
+      <data key="d1">20</data>
+      <data key="d2">C-D</data>
+    </edge>
+    <edge source="n4" target="n6">
+      <data key="d1">5</data>
+      <data key="d2">D-F</data>
+    </edge>
+    <edge source="n6" target="n5">
+      <data key="d1">10</data>
+      <data key="d2">F-E</data>
+    </edge>
+    <edge source="n5" target="n7">
+      <data key="d1">15</data>
+      <data key="d2">E-G</data>
+    </edge>
+    <edge source="n6" target="n8">
+      <data key="d1">25</data>
+      <data key="d2">F-H</data>
+    </edge>
+    <edge source="n8" target="n7">
+      <data key="d1">15</data>
+      <data key="d2">G-H</data>
+    </edge>
+    <edge source="n8" target="n9">
+      <data key="d1">10</data>
+      <data key="d2">H-I</data>
+    </edge>
+    <edge source="n8" target="n10">
+      <data key="d1">5</data>
+      <data key="d2">H-J</data>
+    </edge>
+  </graph>
+</graphml>

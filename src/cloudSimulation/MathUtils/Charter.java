@@ -43,9 +43,7 @@ import org.apache.commons.math3.distribution.ZipfDistribution;
 public class Charter extends ApplicationFrame implements ActionListener {
 
     private XYSeries series;
-    private IntegerDistribution intDist;
-    private RealDistribution realDist;
-    private DistributionType dtype;
+    private Distributor dist;
     private int lastValue = 0;
     private XYDataset dataset;
     private ChartPanel chartPanel;
@@ -55,10 +53,9 @@ public class Charter extends ApplicationFrame implements ActionListener {
         super(title);
         dataset = new XYSeriesCollection();
         series = new XYSeries("Random Data");
-        realDist = new NormalDistribution(30, 10);
-        dtype=DistributionType.NORMALDISTRIBUTION;
         fitter = new CurveFitter(new LevenbergMarquardtOptimizer());
         chartPanel = new ChartPanel(createChart(dataset));
+        dist=new Distributor();
     }
 
     public void fetchWindow() {
@@ -82,7 +79,7 @@ public class Charter extends ApplicationFrame implements ActionListener {
 
         chartPanel = new ChartPanel(createChart(dataset));
         
-        
+   
         content.removeAll();
         content.setLayout(new BorderLayout());
         content.add(chartPanel);
@@ -100,11 +97,19 @@ public class Charter extends ApplicationFrame implements ActionListener {
                     mPanel.add(c);
                 mPanel.revalidate();
             break;
-            case POISSONDISTRIBUTION:
-                poissonDistroComponents(panel);
+            case POISSONDISTRIBUTION:                
+                mPanel.removeAll();
+                mPanel.setLayout(new GridLayout(5,2));
+                for(Component c:poissonDistroComponents(panel))
+                    mPanel.add(c);
+                mPanel.revalidate();
             break;
-            case ZIPFDISTRIBUTION:
-                zipfDistroComponents(panel);
+            case ZIPFDISTRIBUTION:           
+                mPanel.removeAll();
+                mPanel.setLayout(new GridLayout(5,2));
+                for(Component c:zipfDistroComponents(panel))
+                    mPanel.add(c);
+                mPanel.revalidate();
             break;
             case RANDOMDISTRIBUTION:
                 randomDistroComponents(panel);
@@ -188,26 +193,14 @@ public class Charter extends ApplicationFrame implements ActionListener {
         return coll;
     }
     
-    private double getNextDistValue(){
-        switch(dtype){
-            case NORMALDISTRIBUTION:
-                return realDist.density(lastValue++);
-            case POISSONDISTRIBUTION:
-                return intDist.probability(lastValue++);
-            case ZIPFDISTRIBUTION:
-                return intDist.probability(lastValue++);
-            default:
-                return 0;
-        }
-            
-    }
+
     
     public void addAllDataPoints() {
         lastValue=0;
         series.clear();
         
-        for(int i=0;i<60;i++)
-            series.add(lastValue, getNextDistValue());
+        for(int i=0;i<100;i++)
+            series.add(lastValue, dist.getNextDistValue(lastValue++));
         
         ((XYSeriesCollection) dataset).removeAllSeries();
         ((XYSeriesCollection) dataset).addSeries(series);
@@ -217,7 +210,7 @@ public class Charter extends ApplicationFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("ADD_DATA")) {
-            series.add(lastValue, getNextDistValue());
+            series.add(lastValue, dist.getNextDistValue(lastValue));
             //series.add(lastValue++,Math.random());
             ((XYSeriesCollection) dataset).removeAllSeries();
             ((XYSeriesCollection) dataset).addSeries(series);
@@ -227,28 +220,155 @@ public class Charter extends ApplicationFrame implements ActionListener {
     }
 
     public void setDistribution(DistributionType distributionType) {
-        switch(distributionType){
-            case NORMALDISTRIBUTION:
-                dtype=DistributionType.NORMALDISTRIBUTION;
-                realDist=new NormalDistribution(30, 10);
-            break;
-            case POISSONDISTRIBUTION:
-                dtype=DistributionType.POISSONDISTRIBUTION;
-                intDist=new PoissonDistribution(4);
-            break;
-            case ZIPFDISTRIBUTION:
-                dtype=DistributionType.ZIPFDISTRIBUTION;
-                intDist=new ZipfDistribution(60, 1);
-            break;
-            default:
-                dtype=DistributionType.NORMALDISTRIBUTION;
-                realDist=new NormalDistribution(30, 10);
-            break;
-                
-        }
+        dist.setDistribution(distributionType);
     }
 
     private ArrayList<Component> normalDistroComponents(JPanel panel) {
+        ArrayList<Component> cList=new ArrayList<Component>();
+        final JTextField syserr,randomerr,mean,var;
+        final JPanel fpanel=panel;
+        
+        cList.add(new JLabel("SysErr"));
+        syserr=new JTextField();
+        syserr.setColumns(5);
+        syserr.setText(""+dist.getParam("SysErr"));
+        cList.add(syserr);
+
+        cList.add(new JLabel("RandomErr"));
+        randomerr=new JTextField();
+        randomerr.setColumns(5);
+        randomerr.setText(""+dist.getParam("RandomErr"));
+        cList.add(randomerr);
+
+        cList.add(new JLabel("Mean"));
+        mean=new JTextField();
+        mean.setColumns(5);
+        mean.setText(""+dist.getParam("NormalMean"));
+        cList.add(mean);
+        
+        cList.add(new JLabel("Variance"));
+        var=new JTextField();
+        var.setColumns(5);
+        var.setText(""+dist.getParam("NormalVar"));
+        cList.add(var);
+
+        JButton but=new JButton("Replot");
+        but.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dist.setParam("SysErr", Double.parseDouble(syserr.getText().trim()));
+                dist.setParam("RandomErr", Double.parseDouble(randomerr.getText().trim()));
+                dist.setParam("NormalMean", Double.parseDouble(mean.getText().trim()));
+                dist.setParam("NormalVar", Double.parseDouble(var.getText().trim()));
+                dist.reDist();
+               drawChart(fpanel);
+            }
+        }
+        );
+        cList.add(but);
+
+        return cList;
+    }
+
+    private ArrayList<Component> poissonDistroComponents(JPanel panel) {
+        ArrayList<Component> cList=new ArrayList<Component>();
+        final JTextField syserr,randomerr,mean,epsilon;
+        final JPanel fpanel=panel;
+        
+        cList.add(new JLabel("SysErr"));
+        syserr=new JTextField();
+        syserr.setColumns(5);
+        syserr.setText(""+dist.getParam("SysErr"));
+        cList.add(syserr);
+
+        cList.add(new JLabel("RandomErr"));
+        randomerr=new JTextField();
+        randomerr.setColumns(5);
+        randomerr.setText(""+dist.getParam("RandomErr"));
+        cList.add(randomerr);
+
+        cList.add(new JLabel("Mean"));
+        mean=new JTextField();
+        mean.setColumns(5);
+        mean.setText(""+dist.getParam("PoiMean"));
+        cList.add(mean);
+        
+        cList.add(new JLabel("Epsilon"));
+        epsilon=new JTextField();
+        epsilon.setColumns(5);
+        epsilon.setText(""+dist.getParam("PoiEps"));
+        cList.add(epsilon);
+
+        JButton but=new JButton("Replot");
+        but.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dist.setParam("SysErr", Double.parseDouble(syserr.getText().trim()));
+                dist.setParam("RandomErr", Double.parseDouble(randomerr.getText().trim()));
+                dist.setParam("PoiMean", Double.parseDouble(mean.getText().trim()));
+                dist.setParam("PoiEps", Double.parseDouble(epsilon.getText().trim()));
+                dist.reDist();
+               drawChart(fpanel);
+            }
+        }
+        );
+        cList.add(but);
+
+        return cList;
+    }
+
+    private ArrayList<Component> zipfDistroComponents(JPanel panel) {
+        ArrayList<Component> cList=new ArrayList<Component>();
+        final JTextField syserr,randomerr,zipfnoe,zipfexpo;
+        final JPanel fpanel=panel;
+        
+        cList.add(new JLabel("SysErr"));
+        syserr=new JTextField();
+        syserr.setColumns(5);
+        syserr.setText(""+dist.getParam("SysErr"));
+        cList.add(syserr);
+
+        cList.add(new JLabel("RandomErr"));
+        randomerr=new JTextField();
+        randomerr.setColumns(5);
+        randomerr.setText(""+dist.getParam("RandomErr"));
+        cList.add(randomerr);
+
+        cList.add(new JLabel("Number of Elements"));
+        zipfnoe=new JTextField();
+        zipfnoe.setColumns(5);
+        zipfnoe.setText(""+dist.getParam("ZipfNoE"));
+        cList.add(zipfnoe);
+        
+        cList.add(new JLabel("Exponent"));
+        zipfexpo=new JTextField();
+        zipfexpo.setColumns(5);
+        zipfexpo.setText(""+dist.getParam("ZipfExpo"));
+        cList.add(zipfexpo);
+
+        JButton but=new JButton("Replot");
+        but.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dist.setParam("SysErr", Double.parseDouble(syserr.getText().trim()));
+                dist.setParam("RandomErr", Double.parseDouble(randomerr.getText().trim()));
+                dist.setParam("ZipfNoE", Double.parseDouble(zipfnoe.getText().trim()));
+                dist.setParam("ZipfExpo", Double.parseDouble(zipfexpo.getText().trim()));
+                 dist.reDist();   
+                drawChart(fpanel);
+            }
+        }
+        );
+        
+        cList.add(but);
+
+        return cList;
+    }
+
+    private ArrayList<Component> randomDistroComponents(JPanel panel) {
         ArrayList<Component> cList=new ArrayList<Component>();
         JTextField temp;
         final JPanel fpanel=panel;
@@ -285,17 +405,5 @@ public class Charter extends ApplicationFrame implements ActionListener {
         cList.add(but);
 
         return cList;
-    }
-
-    private ArrayList<Component> poissonDistroComponents(JPanel panel) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    private ArrayList<Component> zipfDistroComponents(JPanel panel) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    private ArrayList<Component> randomDistroComponents(JPanel panel) {
-        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

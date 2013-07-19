@@ -26,7 +26,8 @@ public class Tester {
 		//cloudTester();
 		//gmlBRTTester();
 		//chartTester();
-                guiTester();
+                //guiTester();
+                optimizer();
 	}
 	
 	
@@ -68,8 +69,30 @@ public class Tester {
 	}
 
     private static void guiTester() throws ParserConfigurationException, SAXException, IOException {
-                	String filename = "io/sample.graphml";
+        String filename = "io/sample.graphml";
         SimFacade.getInstance().go();
+    }
+
+    private static void optimizer() {
+                VMach VM1=new VMach("ONE",100,100,100,100);
+        
+        VMach VM2=new VMach("TWO",100,100,100,100);
+        
+        VMach VM3=new VMach("THREE",100,100,100,100);
+        
+        VM1.add(new App("App1",10,15,10,15));
+        VM2.add(new App("App2",15,10,15,15));
+        VM3.add(new App("App3",15,15,10,15));
+
+        VM3.add(new App("App6",10,15,10,15));
+        VM2.add(new App("App5",15,10,15,15));
+        VM1.add(new App("App4",15,15,10,15));
+        
+        System.out.println(VM1);
+        
+        System.out.println(VM2);
+        
+        System.out.println(VM3);
     }
 
 }

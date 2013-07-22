@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cloudSimulation.sandbox;
+package cloudSimulation.Optimization;
 
 import java.util.ArrayList;
 
@@ -124,6 +124,13 @@ public class VMach {
     }
 
     public boolean add(App e) {
+        if( cpuLoad + e.getCpuCon() > cpuCap ||
+            ramLoad + e.getRamCon() > ramCap ||
+            storageLoad + e.getStorageCon() > storageCap ||
+            bwLoad + e.getBwCon() > bwCap     
+        )
+            return false;
+        
         cpuLoad += e.getCpuCon();
         ramLoad += e.getRamCon();
         storageLoad += e.getStorageCon();

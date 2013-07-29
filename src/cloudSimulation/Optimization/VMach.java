@@ -109,11 +109,24 @@ public class VMach {
         this.bwLoad = bwLoad;
     }
 
+    public ArrayList<App> getApps() {
+        return apps;
+    }
+    
+    public int getnumOfApps() {
+        return apps.size();
+    }
     @Override
     public String toString() {
         return "VMach{" + "name=" + name + ", cpu=" + cpuLoad + "/" + cpuCap + ", ram=" + ramLoad + "/" + ramCap + ", storage=" + storageLoad + "/" + storageCap + ", bw=" + bwLoad + "/" + bwCap + '}';
     }
 
+    public boolean containsApp(App a){
+        if(apps.contains(a))
+            return true;
+        else return false;
+    }
+    
     public App get(String name) {
         for (App a : apps) {
             if (a.getName().equals(name)) {
@@ -140,12 +153,23 @@ public class VMach {
     }
 
     public boolean remove(App e) {
-
+        if(!apps.contains(e))
+            return false;
+        
         cpuLoad -= e.getCpuCon();
         ramLoad -= e.getRamCon();
         storageLoad -= e.getStorageCon();
         bwLoad -= e.getBwCon();
 
         return apps.remove(e);
+    }
+
+    void clearApps() {
+        apps.clear();
+        cpuLoad = 0;
+        ramLoad = 0;
+        storageLoad = 0;
+        bwLoad = 0;
+        
     }
 }

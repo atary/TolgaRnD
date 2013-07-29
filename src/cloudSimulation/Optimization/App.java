@@ -68,4 +68,18 @@ public class App {
     public String toString() {
         return "App{" + "name=" + name + ", cpuCon=" + cpuCon + ", ramCon=" + ramCon + ", storageCon=" + storageCon + ", bwCon=" + bwCon + '}';
     }
+
+    public int getCon(SourceType t) {
+        switch(t){
+            case CPU:
+                return cpuCon;
+            case RAM:
+                return ramCon;
+            case STORAGE:
+                return storageCon;
+            case BANDWIDTH:
+                return bwCon;    
+        }
+        return 0;
+    }
 }

@@ -85,7 +85,7 @@ public class Tester {
         SimEngine engin = new SimEngine();
         engin.createVMs();
        
-        engin.go(1500,100);
+        engin.go(500,300);
         
  
             

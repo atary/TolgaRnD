@@ -28,6 +28,9 @@ public class SimEngine {
         VMs.add(new VMach("TWO", 100, 100, 100, 100));
 
         VMs.add(new VMach("THREE", 100, 100, 100, 100));
+        
+        VMs.add(new VMach("FOUR", 50, 50, 50, 50));
+        
     }
 
     public boolean submitApp(int i, App app) {
@@ -56,13 +59,14 @@ public class SimEngine {
     }
 
     public void go(int freq, int maxit) throws InterruptedException {
-        int i = 0,numOfTasks=0;
+        int i = 0,numOfTasks=0,numOfVMs=4;
         Random r = new Random();
         boolean yield=true;
         
         while (i < maxit) {
             if (r.nextInt(5) > -1) {
-                yield=submitApp(numOfTasks++%3, new App("App" + i, r.nextInt(10) + 5, r.nextInt(10) + 5, r.nextInt(10) + 5, r.nextInt(10) + 5));
+                //numOfTasks++%numOfVMs,
+                yield=submitApp( new App("App" + i, r.nextInt(30), r.nextInt(30), r.nextInt(30) , r.nextInt(30)));
                 //yield=submitApp(new App("App" + i, r.nextInt(10) + 5, r.nextInt(10) + 5, r.nextInt(10) + 5, r.nextInt(10) + 5));
             }
 
@@ -78,6 +82,8 @@ public class SimEngine {
 
     private boolean submitApp(App app) {
        LPSolver lps=new LPSolver();
+       lps.setNumOfVms(4);
+       lps.setCapacities(VMs);
        int numOfTasks=0;
        int[][] wlds;
        App[] apps;
@@ -111,7 +117,7 @@ public class SimEngine {
        
        HashMap<Integer,Character> mapping=lps.solve();
        
-       if(mapping.size()<numOfTasks+1 || mapping==null){
+       if(mapping==null || mapping.size()<numOfTasks+1){
            System.out.println("App refused");
            return false;
        }

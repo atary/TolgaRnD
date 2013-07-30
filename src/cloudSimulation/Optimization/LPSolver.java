@@ -4,6 +4,7 @@
  */
 package cloudSimulation.Optimization;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
@@ -24,24 +25,49 @@ public class LPSolver {
 
     private SolverFactory factory;
     private int numOfTasks;
+    private int numOfVms;
     private int[][] wls;
+    private int[][] capacities;
     
     public LPSolver() {
         factory = new SolverFactoryLpSolve(); // use lp_solve
         factory.setParameter(Solver.VERBOSE, 0);
         factory.setParameter(Solver.TIMEOUT, 10); // set timeout to 100 seconds
         numOfTasks=9;
+        numOfVms=3;
         wls=new int[SourceType.values().length][numOfTasks];
-        wls[SourceType.CPU.ordinal()]       = new int[]{30,10,10,10,30,10,10,10,30,10};
-        wls[SourceType.RAM.ordinal()]       = new int[]{10,30,10,10,10,30,10,10,10,30};
-        wls[SourceType.STORAGE.ordinal()]   = new int[]{10,10,30,10,10,10,30,10,10,10};
-        wls[SourceType.BANDWIDTH.ordinal()] = new int[]{10,10,10,30,10,10,10,30,10,10};
+        capacities=new int[numOfVms][SourceType.values().length];
+        
+        //wls[SourceType.CPU.ordinal()]       = new int[]{30,10,10,10,30,10,10,10,30,10};
+        //wls[SourceType.RAM.ordinal()]       = new int[]{10,30,10,10,10,30,10,10,10,30};
+        //wls[SourceType.STORAGE.ordinal()]   = new int[]{10,10,30,10,10,10,30,10,10,10};
+        //wls[SourceType.BANDWIDTH.ordinal()] = new int[]{10,10,10,30,10,10,10,30,10,10};
     }
 
     public int getNumOfTasks() {
         return numOfTasks;
     }
 
+    public int getNumOfVms() {
+        return numOfVms;
+    }
+
+    public void setNumOfVms(int numOfVms) {
+        this.numOfVms = numOfVms;
+        capacities=new int[numOfVms][SourceType.values().length];
+    }
+
+    public void setCapacities(ArrayList<VMach> VMs){
+        int i=0;
+        for(VMach vm:VMs){
+            capacities[i][SourceType.CPU.ordinal()]=vm.getCpuCap();
+            capacities[i][SourceType.RAM.ordinal()]=vm.getRamCap();
+            capacities[i][SourceType.STORAGE.ordinal()]=vm.getStorageCap();
+            capacities[i][SourceType.BANDWIDTH.ordinal()]=vm.getBwCap();
+            i++;
+        }
+    }
+    
     public void setNumOfTasks(int numOfTasks) {
         this.numOfTasks = numOfTasks;
         wls=new int[SourceType.values().length][numOfTasks];
@@ -74,7 +100,9 @@ public class LPSolver {
         Linear linear = new Linear();
         
         //Set objective: Server A-B-C cpu wlds summed should be max
-        for(char ind='A';ind<='C';ind++)
+        int indCount=0;
+        char ind;
+        for(indCount=0,ind='A';indCount<numOfVms;indCount++,ind++)
             for(SourceType t:SourceType.values())
                 linear.add(1, t.getName()+ind);   
         
@@ -83,13 +111,13 @@ public class LPSolver {
         //Each task should be assigned to at most one server
         for(int i=0;i<=numOfTasks;i++){ 
             linear = new Linear();
-            for(char ind='A';ind<='C';ind++)
+            for(indCount=0,ind='A';indCount<numOfVms;indCount++,ind++)
                 linear.add(1, ""+ind+i);
             problem.add(linear, "<=", 1);                   
         }
 
         //for each server
-        for(char ind='A';ind<='C';ind++)
+        for(indCount=0,ind='A';indCount<numOfVms;indCount++,ind++)
             for(SourceType t:SourceType.values()){
                 //Sum up all the assigned tasks... should be equal to cpu wld of the server
                 linear = new Linear();
@@ -99,17 +127,17 @@ public class LPSolver {
                 problem.add(linear, "=", 0);
             }
 
-        for(char ind='A';ind<='C';ind++)
+        for(indCount=0,ind='A';indCount<numOfVms;indCount++,ind++)
             for(SourceType t:SourceType.values())
                 problem.setVarType(t.getName()+ind, Integer.class);
 
-        for(char ind='A';ind<='C';ind++)
+        for(indCount=0,ind='A';indCount<numOfVms;indCount++,ind++)
                 for(int i=0;i<=numOfTasks;i++)    
                     problem.setVarType(""+ind+i, Boolean.class);
         
-        for(char ind='A';ind<='C';ind++)
+        for(indCount=0,ind='A';indCount<numOfVms;indCount++,ind++)
             for(SourceType t:SourceType.values())
-                problem.setVarUpperBound(t.getName()+ind, 100);
+                problem.setVarUpperBound(t.getName()+ind, capacities[indCount][t.ordinal()]);
         
         Solver solver = factory.get();
         Result result = solver.solve(problem);

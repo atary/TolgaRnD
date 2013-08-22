@@ -12,6 +12,7 @@ import cloudSimulation.CloudUtils.CloudExample;
 import cloudSimulation.GML2BRITE.GML2BRITE;
 import cloudSimulation.GraphUtils.GraphML;
 import cloudSimulation.MathUtils.Charter;
+import cloudSimulation.Optimization.ILPGUI;
 import cloudSimulation.Optimization.LPSolver;
 import java.util.Scanner;
 import javax.swing.JFrame;
@@ -85,7 +86,9 @@ public class Tester {
         SimEngine engin = new SimEngine();
         engin.createVMs();
        
-        engin.go(500,300);
+        ILPGUI.go(engin);
+        
+        //engin.go(1000,100);
         
  
             

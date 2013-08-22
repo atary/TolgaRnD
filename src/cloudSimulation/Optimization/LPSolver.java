@@ -161,7 +161,8 @@ public class LPSolver {
                 char val=tmp.charAt(0);
                 mapping.put(key, val);
             }
-        }   
+        } 
+
        return mapping; 
     }
     

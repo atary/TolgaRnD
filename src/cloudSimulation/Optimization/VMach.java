@@ -118,7 +118,7 @@ public class VMach {
     }
     @Override
     public String toString() {
-        return "VMach{" + "name=" + name + ", cpu=" + cpuLoad + "/" + cpuCap + ", ram=" + ramLoad + "/" + ramCap + ", storage=" + storageLoad + "/" + storageCap + ", bw=" + bwLoad + "/" + bwCap + '}';
+        return "VMach{" + "name=" + name + ", cpu=" + cpuLoad + "/" + cpuCap + ", ram=" + ramLoad + "/" + ramCap + ", bw=" + bwLoad + "/" + bwCap + ", storage=" + storageLoad + "/" + storageCap + '}';
     }
 
     public boolean containsApp(App a){

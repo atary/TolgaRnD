@@ -140,7 +140,7 @@ public class SimEngine {
         return submitApp(app);
     }
     
-    public boolean submitApp5(int j, App app) {
+    public boolean submitApp(int j, App app) {
         //Lowest span (max - min)
         double minSpan = Integer.MAX_VALUE;
         int minSpanVMid = -1;
@@ -166,7 +166,7 @@ public class SimEngine {
         return submitApp(app);
     }
     
-    public boolean submitApp(int j, App app) {
+    public boolean submitApp6(int j, App app) {
         //Most decreasing span
         double biggestDecrease = Double.NEGATIVE_INFINITY;
         int biggestDecreaseId = -1;

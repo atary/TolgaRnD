@@ -69,6 +69,13 @@ public class VMach {
         double min = Math.min(Math.min(getCpuUtil(),getRamUtil()),Math.min(getStorageUtil(),getBwUtil())); 
         return max - min;
     }
+    
+    public double getCumDiff(){
+        double cpuDiff = Math.abs(getCpuUtil()-getRamUtil()) + Math.abs(getCpuUtil()-getStorageUtil()) + Math.abs(getCpuUtil()-getBwUtil());
+        double ramDiff = Math.abs(getRamUtil()-getStorageUtil()) + Math.abs(getRamUtil()-getBwUtil());
+        double storageDiff = Math.abs(getStorageUtil()-getBwUtil());
+        return (cpuDiff + ramDiff + storageDiff);
+    }
 
     public int getCpuCap() {
         return cpuCap;

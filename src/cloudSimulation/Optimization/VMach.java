@@ -44,6 +44,31 @@ public class VMach {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public double getUtil(){
+        return (double)(getCpuUtil() + getRamUtil() + getStorageUtil() + getBwUtil()) / 4; 
+    }
+    
+    public double getUtilDeviation(){
+        return Math.sqrt((Math.pow((getCpuUtil() - getUtil()), 2)
+                + Math.pow((getRamUtil() - getUtil()), 2)
+                + Math.pow((getStorageUtil() - getUtil()), 2)
+                + Math.pow((getBwUtil() - getUtil()), 2)) / 4);
+    }
+    
+    public double getSkewness(){
+        if(getUtil() == 0) return 0;
+        return Math.sqrt(Math.pow((getCpuUtil()/getUtil())-1, 2)
+                + Math.pow((getRamUtil()/getUtil())-1, 2)
+                + Math.pow((getStorageUtil()/getUtil())-1, 2)
+                + Math.pow((getBwUtil()/getUtil())-1, 2));
+    }
+    
+    public double getSpan(){
+        double max = Math.max(Math.max(getCpuUtil(),getRamUtil()),Math.max(getStorageUtil(),getBwUtil()));
+        double min = Math.min(Math.min(getCpuUtil(),getRamUtil()),Math.min(getStorageUtil(),getBwUtil())); 
+        return max - min;
+    }
 
     public int getCpuCap() {
         return cpuCap;
@@ -59,6 +84,10 @@ public class VMach {
 
     public void setCpuLoad(int cpuLoad) {
         this.cpuLoad = cpuLoad;
+    }
+    
+    public double getCpuUtil(){
+        return (double)cpuLoad / cpuCap;
     }
 
     public int getRamCap() {
@@ -76,6 +105,10 @@ public class VMach {
     public void setRamLoad(int ramLoad) {
         this.ramLoad = ramLoad;
     }
+    
+    public double getRamUtil(){
+        return (double)ramLoad / ramCap;
+    }
 
     public int getStorageCap() {
         return storageCap;
@@ -92,6 +125,10 @@ public class VMach {
     public void setStorageLoad(int storageLoad) {
         this.storageLoad = storageLoad;
     }
+    
+    public double getStorageUtil(){
+        return (double)storageLoad / storageCap;
+    }
 
     public int getBwCap() {
         return bwCap;
@@ -107,6 +144,10 @@ public class VMach {
 
     public void setBwLoad(int bwLoad) {
         this.bwLoad = bwLoad;
+    }
+    
+    public double getBwUtil(){
+        return (double)bwLoad / bwCap;
     }
 
     public ArrayList<App> getApps() {

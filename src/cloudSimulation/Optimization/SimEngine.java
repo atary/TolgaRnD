@@ -42,7 +42,8 @@ public class SimEngine {
 
     }
 
-    public boolean submitApp(int i, App app) {
+    public boolean submitApp1(int i, App app) {
+        //Original round-robin
         if (!VMs.get(i).add(app)) {
             int j = i;
             do {
@@ -55,7 +56,140 @@ public class SimEngine {
         } else {
             return true;
         }
+        //
 
+        return submitApp(app);
+    }
+    
+    public boolean submitApp2(int j, App app) {
+        //Xiao's lowest skewness
+        double minSkewness = Double.POSITIVE_INFINITY;
+        int minSkewnessVMid = -1;
+        for(int i = 0; i < VMs.size(); i++){
+            if(!VMs.get(i).add(app)){
+                status.append("Skewness " + (i + 1) + ": " + "-" + ".\n");
+                continue;
+            }
+            double skewness = VMs.get(i).getSkewness();
+            status.append("Skewness " + (i + 1) + ": " + skewness + ".\n");
+            if(skewness < minSkewness){
+                minSkewness = skewness;
+                minSkewnessVMid = i;
+            }
+            VMs.get(i).remove(app);
+        }
+        if(minSkewnessVMid > -1){
+            VMs.get(minSkewnessVMid).add(app);
+            status.append("App added to VM " + (minSkewnessVMid + 1) + ".\n");
+            return true;
+        }
+        //
+        return submitApp(app);
+    }
+    
+    public boolean submitApp3(int j, App app) {
+        //Xiao's most decreasing skewness
+        double biggestDecrease = Double.NEGATIVE_INFINITY;
+        int biggestDecreaseId = -1;
+        for(int i = 0; i < VMs.size(); i++){
+            double beginning = VMs.get(i).getSkewness();
+            if(!VMs.get(i).add(app)){
+                status.append("Skewness change " + (i + 1) + ": " + "-" + ".\n");
+                continue;
+            }
+            double end = VMs.get(i).getSkewness();
+            status.append("Skewness change " + (i + 1) + ": " + (beginning-end) + ".\n");
+            if(beginning-end > biggestDecrease){
+                biggestDecrease = beginning-end;
+                biggestDecreaseId = i;
+            }
+            VMs.get(i).remove(app);
+        }
+        if(biggestDecreaseId > -1){
+            VMs.get(biggestDecreaseId).add(app);
+            status.append("App added to VM " + (biggestDecreaseId + 1) + ".\n");
+            return true;
+        }
+        //
+        return submitApp(app);
+    }
+    
+    public boolean submitApp4(int j, App app) {
+        //Lowest standard deviation
+        double minDeviation = Double.POSITIVE_INFINITY;
+        int minDeviationVMid = -1;
+        for(int i = 0; i < VMs.size(); i++){
+            if(!VMs.get(i).add(app)){
+                status.append("Standard deviation " + (i + 1) + ": " + "-" + ".\n");
+                continue;
+            }
+            double deviation = VMs.get(i).getUtilDeviation();
+            status.append("Standard deviaton " + (i + 1) + ": " + deviation + ".\n");
+            if(deviation < minDeviation){
+                minDeviation = deviation;
+                minDeviationVMid = i;
+            }
+            VMs.get(i).remove(app);
+        }
+        if(minDeviationVMid > -1){
+            VMs.get(minDeviationVMid).add(app);
+            status.append("App added to VM " + (minDeviationVMid + 1) + ".\n");
+            return true;
+        }
+        //
+        return submitApp(app);
+    }
+    
+    public boolean submitApp5(int j, App app) {
+        //Lowest span (max - min)
+        double minSpan = Integer.MAX_VALUE;
+        int minSpanVMid = -1;
+        for(int i = 0; i < VMs.size(); i++){
+            if(!VMs.get(i).add(app)){
+                status.append("Span " + (i + 1) + ": " + "-" + ".\n");
+                continue;
+            }
+            double span = VMs.get(i).getSpan();
+            status.append("Span " + (i + 1) + ": " + span + ".\n");
+            if(span < minSpan){
+                minSpan = span;
+                minSpanVMid = i;
+            }
+            VMs.get(i).remove(app);
+        }
+        if(minSpanVMid > -1){
+            VMs.get(minSpanVMid).add(app);
+            status.append("App added to VM " + (minSpanVMid + 1) + ".\n");
+            return true;
+        }
+        //
+        return submitApp(app);
+    }
+    
+    public boolean submitApp(int j, App app) {
+        //Most decreasing span
+        double biggestDecrease = Double.NEGATIVE_INFINITY;
+        int biggestDecreaseId = -1;
+        for(int i = 0; i < VMs.size(); i++){
+            double beginning = VMs.get(i).getSpan();
+            if(!VMs.get(i).add(app)){
+                status.append("Span change " + (i + 1) + ": " + "-" + ".\n");
+                continue;
+            }
+            double end = VMs.get(i).getSpan();
+            status.append("Span change " + (i + 1) + ": " + (beginning-end) + ".\n");
+            if(beginning-end > biggestDecrease){
+                biggestDecrease = beginning-end;
+                biggestDecreaseId = i;
+            }
+            VMs.get(i).remove(app);
+        }
+        if(biggestDecreaseId > -1){
+            VMs.get(biggestDecreaseId).add(app);
+            status.append("App added to VM " + (biggestDecreaseId + 1) + ".\n");
+            return true;
+        }
+        //
         return submitApp(app);
     }
 
@@ -124,7 +258,7 @@ public class SimEngine {
             return false;
         }
 
-
+        int numMigrations = 0;
         for (Map.Entry<Integer, Character> e : mapping.entrySet()) {
             int vmIndex = e.getValue() - 65;
             int appIndex = e.getKey();
@@ -132,10 +266,12 @@ public class SimEngine {
             if (!VMs.get(vmIndex).containsApp(a)) {
                 if (appIndex < numOfTasks) {
                     status.append("App " + a.getName() + " migrated to VM " + vmIndex+"\n");
+                    numMigrations++;
                 }
             }
 
         }
+        status.append("Count: "+numMigrations+"\n");
 
         for (VMach vm : VMs) {
             vm.clearApps();

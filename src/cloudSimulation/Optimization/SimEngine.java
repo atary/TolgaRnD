@@ -35,31 +35,44 @@ public class SimEngine {
     
     public void createVMs() {
         VMs.clear();
-        VMs.add(new VMach("ONE", 100, 100, 100, 100));
+        VMs.add(new VMach("ONE", 1000, 1000, 1000, 1000));
 
-        VMs.add(new VMach("TWO", 100, 100, 100, 100));
+        VMs.add(new VMach("TWO", 1000, 1000, 1000, 1000));
 
-        VMs.add(new VMach("THREE", 100, 100, 100, 100));
-
+        VMs.add(new VMach("THREE", 1000, 1000, 1000, 1000));
+        
+        VMs.add(new VMach("FOUR", 1000, 1000, 1000, 1000));
+        
+        VMs.add(new VMach("FIVE", 1000, 1000, 1000, 1000));
+        
+        VMs.add(new VMach("SIX", 1000, 1000, 1000, 1000));
+        
+        VMs.add(new VMach("SEVEN", 1000, 1000, 1000, 1000));
+        
+        VMs.add(new VMach("EIGHT", 1000, 1000, 1000, 1000));
+        
+        VMs.add(new VMach("NINE", 1000, 1000, 1000, 1000));
+        
+        VMs.add(new VMach("TEN", 1000, 1000, 1000, 1000));
     }
 
-    public boolean submitApp1(int i, App app) {
+    public boolean submitApp(int i, App app) {
         //Original round-robin
         if (!VMs.get(i).add(app)) {
             int j = i;
             do {
                 j = (j + 1) % VMs.size();
                 if (VMs.get(j).add(app)) {
-                    System.out.print("App added to VM " + (j + 1) + " instead of VM " + (i + 1)+"\n");
+                    //System.out.print("App added to VM " + (j + 1) + " instead of VM " + (i + 1)+"\n");
                     return true;
                 }
             } while (j != i);
         } else {
             return true;
         }
-        //
-
-        return submitApp(app);
+        //return submitApp(app);
+        total += (it-1);
+        return false;
     }
     
     public boolean submitApp2(int j, App app) {
@@ -93,13 +106,13 @@ public class SimEngine {
         double biggestDecrease = Double.NEGATIVE_INFINITY;
         int biggestDecreaseId = -1;
         for(int i = 0; i < VMs.size(); i++){
-            double beginning = VMs.get(i).getSkewness();
+            double beginning = VMs.get(i).getMinDiff();
             if(!VMs.get(i).add(app)){
-                System.out.print("Skewness change " + (i + 1) + ": " + "-" + ".\n");
+                //System.out.print("Skewness change " + (i + 1) + ": " + "-" + ".\n");
                 continue;
             }
-            double end = VMs.get(i).getSkewness();
-            System.out.print("Skewness change " + (i + 1) + ": " + (beginning-end) + ".\n");
+            double end = VMs.get(i).getMinDiff();
+            //System.out.print("Skewness change " + (i + 1) + ": " + (beginning-end) + ".\n");
             if(beginning-end > biggestDecrease){
                 biggestDecrease = beginning-end;
                 biggestDecreaseId = i;
@@ -108,11 +121,12 @@ public class SimEngine {
         }
         if(biggestDecreaseId > -1){
             VMs.get(biggestDecreaseId).add(app);
-            System.out.print("App added to VM " + (biggestDecreaseId + 1) + ".\n");
+            //System.out.print("App added to VM " + (biggestDecreaseId + 1) + ".\n");
             return true;
         }
-        //
-        return submitApp(app);
+        //return submitApp(app);
+        total += (it-1);
+        return false;
     }
     
     public boolean submitApp4(int j, App app) {
@@ -141,7 +155,7 @@ public class SimEngine {
         return submitApp(app);
     }
     
-    public boolean submitApp(int j, App app) {
+    public boolean submitApp5(int j, App app) {
         //Lowest span (max - min)
         double minSpan = Integer.MAX_VALUE;
         int minSpanVMid = -1;
@@ -164,7 +178,8 @@ public class SimEngine {
             return true;
         }
         //return submitApp(app);
-        total += it;
+        //System.out.println(it-1);
+        total += (it-1);
         return false;
     }
     
@@ -218,18 +233,17 @@ public class SimEngine {
     }
     
     public void go(){
-        for(int i=0; i<100; i++){
+        for(int i=0; i<1000; i++){
             boolean yield = true;
             while (yield) {
                 yield = step();
             }
-            System.out.println(it);
             it = 0;
             for (VMach vm : VMs) {
                 vm.clearApps();
             }
         }
-        System.out.println((double)total/100);
+        System.out.println((double)total/1000);
     }
 
     private boolean submitApp(App app) {

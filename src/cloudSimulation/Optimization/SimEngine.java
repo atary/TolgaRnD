@@ -18,6 +18,7 @@ public class SimEngine {
     private ArrayList<VMach> VMs;
     private int it,numOfTasks = 0;
     private StringBuilder status;
+    private int total = 0;
     
     public SimEngine() {
         status=new StringBuilder();
@@ -49,7 +50,7 @@ public class SimEngine {
             do {
                 j = (j + 1) % VMs.size();
                 if (VMs.get(j).add(app)) {
-                    status.append("App added to VM " + (j + 1) + " instead of VM " + (i + 1)+"\n");
+                    System.out.print("App added to VM " + (j + 1) + " instead of VM " + (i + 1)+"\n");
                     return true;
                 }
             } while (j != i);
@@ -67,11 +68,11 @@ public class SimEngine {
         int minSkewnessVMid = -1;
         for(int i = 0; i < VMs.size(); i++){
             if(!VMs.get(i).add(app)){
-                status.append("Skewness " + (i + 1) + ": " + "-" + ".\n");
+                System.out.print("Skewness " + (i + 1) + ": " + "-" + ".\n");
                 continue;
             }
             double skewness = VMs.get(i).getSkewness();
-            status.append("Skewness " + (i + 1) + ": " + skewness + ".\n");
+            System.out.print("Skewness " + (i + 1) + ": " + skewness + ".\n");
             if(skewness < minSkewness){
                 minSkewness = skewness;
                 minSkewnessVMid = i;
@@ -80,7 +81,7 @@ public class SimEngine {
         }
         if(minSkewnessVMid > -1){
             VMs.get(minSkewnessVMid).add(app);
-            status.append("App added to VM " + (minSkewnessVMid + 1) + ".\n");
+            System.out.print("App added to VM " + (minSkewnessVMid + 1) + ".\n");
             return true;
         }
         //
@@ -94,11 +95,11 @@ public class SimEngine {
         for(int i = 0; i < VMs.size(); i++){
             double beginning = VMs.get(i).getSkewness();
             if(!VMs.get(i).add(app)){
-                status.append("Skewness change " + (i + 1) + ": " + "-" + ".\n");
+                System.out.print("Skewness change " + (i + 1) + ": " + "-" + ".\n");
                 continue;
             }
             double end = VMs.get(i).getSkewness();
-            status.append("Skewness change " + (i + 1) + ": " + (beginning-end) + ".\n");
+            System.out.print("Skewness change " + (i + 1) + ": " + (beginning-end) + ".\n");
             if(beginning-end > biggestDecrease){
                 biggestDecrease = beginning-end;
                 biggestDecreaseId = i;
@@ -107,7 +108,7 @@ public class SimEngine {
         }
         if(biggestDecreaseId > -1){
             VMs.get(biggestDecreaseId).add(app);
-            status.append("App added to VM " + (biggestDecreaseId + 1) + ".\n");
+            System.out.print("App added to VM " + (biggestDecreaseId + 1) + ".\n");
             return true;
         }
         //
@@ -120,11 +121,11 @@ public class SimEngine {
         int minDeviationVMid = -1;
         for(int i = 0; i < VMs.size(); i++){
             if(!VMs.get(i).add(app)){
-                status.append("Standard deviation " + (i + 1) + ": " + "-" + ".\n");
+                System.out.print("Standard deviation " + (i + 1) + ": " + "-" + ".\n");
                 continue;
             }
             double deviation = VMs.get(i).getUtilDeviation();
-            status.append("Standard deviaton " + (i + 1) + ": " + deviation + ".\n");
+            System.out.print("Standard deviaton " + (i + 1) + ": " + deviation + ".\n");
             if(deviation < minDeviation){
                 minDeviation = deviation;
                 minDeviationVMid = i;
@@ -133,7 +134,7 @@ public class SimEngine {
         }
         if(minDeviationVMid > -1){
             VMs.get(minDeviationVMid).add(app);
-            status.append("App added to VM " + (minDeviationVMid + 1) + ".\n");
+            System.out.print("App added to VM " + (minDeviationVMid + 1) + ".\n");
             return true;
         }
         //
@@ -146,11 +147,11 @@ public class SimEngine {
         int minSpanVMid = -1;
         for(int i = 0; i < VMs.size(); i++){
             if(!VMs.get(i).add(app)){
-                status.append("Span " + (i + 1) + ": " + "-" + ".\n");
+                //System.out.println("Span " + (i + 1) + ": " + "-" + ".");
                 continue;
             }
             double span = VMs.get(i).getSpan();
-            status.append("Span " + (i + 1) + ": " + span + ".\n");
+            //System.out.println("Span " + (i + 1) + ": " + span + ".");
             if(span < minSpan){
                 minSpan = span;
                 minSpanVMid = i;
@@ -159,11 +160,12 @@ public class SimEngine {
         }
         if(minSpanVMid > -1){
             VMs.get(minSpanVMid).add(app);
-            status.append("App added to VM " + (minSpanVMid + 1) + ".\n");
+            //System.out.println("App added to VM " + (minSpanVMid + 1) + ".");
             return true;
         }
-        //
-        return submitApp(app);
+        //return submitApp(app);
+        total += it;
+        return false;
     }
     
     public boolean submitApp6(int j, App app) {
@@ -173,11 +175,11 @@ public class SimEngine {
         for(int i = 0; i < VMs.size(); i++){
             double beginning = VMs.get(i).getSpan();
             if(!VMs.get(i).add(app)){
-                status.append("Span change " + (i + 1) + ": " + "-" + ".\n");
+                System.out.print("Span change " + (i + 1) + ": " + "-" + ".\n");
                 continue;
             }
             double end = VMs.get(i).getSpan();
-            status.append("Span change " + (i + 1) + ": " + (beginning-end) + ".\n");
+            System.out.print("Span change " + (i + 1) + ": " + (beginning-end) + ".\n");
             if(beginning-end > biggestDecrease){
                 biggestDecrease = beginning-end;
                 biggestDecreaseId = i;
@@ -186,7 +188,7 @@ public class SimEngine {
         }
         if(biggestDecreaseId > -1){
             VMs.get(biggestDecreaseId).add(app);
-            status.append("App added to VM " + (biggestDecreaseId + 1) + ".\n");
+            System.out.println("App added to VM " + (biggestDecreaseId + 1) + ".");
             return true;
         }
         //
@@ -213,6 +215,21 @@ public class SimEngine {
             }
             Thread.sleep(freq);
         }
+    }
+    
+    public void go(){
+        for(int i=0; i<100; i++){
+            boolean yield = true;
+            while (yield) {
+                yield = step();
+            }
+            System.out.println(it);
+            it = 0;
+            for (VMach vm : VMs) {
+                vm.clearApps();
+            }
+        }
+        System.out.println((double)total/100);
     }
 
     private boolean submitApp(App app) {
@@ -254,7 +271,7 @@ public class SimEngine {
         HashMap<Integer, Character> mapping = lps.solve();
 
         if (mapping == null || mapping.size() < numOfTasks + 1) {
-            status.append("App refused!!!!!"+"\n");
+            System.out.println("App refused!!!!!");
             return false;
         }
 
@@ -265,13 +282,13 @@ public class SimEngine {
             App a = apps[appIndex];
             if (!VMs.get(vmIndex).containsApp(a)) {
                 if (appIndex < numOfTasks) {
-                    status.append("App " + a.getName() + " migrated to VM " + vmIndex+"\n");
+                    System.out.println("App " + a.getName() + " migrated to VM " + vmIndex);
                     numMigrations++;
                 }
             }
 
         }
-        status.append("Count: "+numMigrations+"\n");
+        System.out.println("Count: "+numMigrations);
 
         for (VMach vm : VMs) {
             vm.clearApps();
@@ -288,7 +305,7 @@ public class SimEngine {
 
     public boolean step() {
         
-        status.delete(0, status.length());     
+        //status.delete(0, status.length());     
         int numOfVMs = 3;
         Random r = new Random();
         boolean yield = true;

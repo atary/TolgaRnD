@@ -153,9 +153,11 @@ public class LPSolver {
         Arrays.sort(s);
         for(String sub:s){
             if(sub.contains("cpu") || sub.contains("ram") || sub.contains("sto") || sub.contains("bwi") )
-                System.out.println(sub);
+            {
+                //System.out.println(sub);
+            }
             else if(sub.charAt(sub.length()-1)!='0'){
-                System.out.println(sub);
+                //System.out.println(sub);
                 String tmp=sub.substring(0, sub.indexOf('='));
                 int key=Integer.parseInt(tmp.substring(1));
                 char val=tmp.charAt(0);

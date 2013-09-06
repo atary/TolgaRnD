@@ -86,9 +86,9 @@ public class Tester {
         SimEngine engin = new SimEngine();
         engin.createVMs();
        
-        ILPGUI.go(engin);
+        //ILPGUI.go(engin);
         
-        //engin.go(1000,100);
+        engin.go();
         
  
             

@@ -35,28 +35,16 @@ public class SimEngine {
     
     public void createVMs() {
         VMs.clear();
-        VMs.add(new VMach("ONE", 1000, 1000, 1000, 1000));
-
-        VMs.add(new VMach("TWO", 1000, 1000, 1000, 1000));
-
-        VMs.add(new VMach("THREE", 1000, 1000, 1000, 1000));
         
-        VMs.add(new VMach("FOUR", 1000, 1000, 1000, 1000));
+        int VMnumber = 20;
+        int VMcapacity = 100;
         
-        VMs.add(new VMach("FIVE", 1000, 1000, 1000, 1000));
-        
-        VMs.add(new VMach("SIX", 1000, 1000, 1000, 1000));
-        
-        VMs.add(new VMach("SEVEN", 1000, 1000, 1000, 1000));
-        
-        VMs.add(new VMach("EIGHT", 1000, 1000, 1000, 1000));
-        
-        VMs.add(new VMach("NINE", 1000, 1000, 1000, 1000));
-        
-        VMs.add(new VMach("TEN", 1000, 1000, 1000, 1000));
+        for(int i=0; i<VMnumber; i++){
+            VMs.add(new VMach("VM-"+i, VMcapacity, VMcapacity, VMcapacity, VMcapacity));
+        }
     }
 
-    public boolean submitApp(int i, App app) {
+    public boolean submitApp1(int i, App app) {
         //Original round-robin
         if (!VMs.get(i).add(app)) {
             int j = i;
@@ -155,7 +143,7 @@ public class SimEngine {
         return submitApp(app);
     }
     
-    public boolean submitApp5(int j, App app) {
+    public boolean submitApp(int j, App app) {
         //Lowest span (max - min)
         double minSpan = Integer.MAX_VALUE;
         int minSpanVMid = -1;
